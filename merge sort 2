@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Функция слияния двух отсортированных подмассивов
+void merge(int arr[], int left, int mid, int right) {
+int i, j, k;
+int n1 = mid - left + 1; // Размер левого подмассива
+int n2 = right - mid; // Размер правого подмассива
+
+// Временные массивы для хранения подмассивов
+int *leftArr = (int*)malloc(n1 * sizeof(int));
+int *rightArr = (int*)malloc(n2 * sizeof(int));
+
+if (leftArr == NULL || rightArr == NULL) {
+    printf("Ошибка выделения памяти\n");
+    exit(EXIT_FAILURE);
+}
+
+// Копирование данных во временные массивы
+for (i = 0; i < n1; i++)
+    leftArr[i] = arr[left + i];
+for (j = 0; j < n2; j++)
+    rightArr[j] = arr[mid + 1 + j];
+
+// Слияние временных массивов обратно в arr[left..right]
+i = 0;  // Индекс первого подмассива
+j = 0;  // Индекс второго подмассива
+k = left; // Индекс объединённого массива
+
+while (i < n1 && j < n2) {
+    if (leftArr[i] <= rightArr[j]) {
+        arr[k] = leftArr[i];
+        i++;
+    } else {
+        arr[k] = rightArr[j];
+        j++;
+    }
+    k++;
+}
+
+// Копирование оставшихся элементов leftArr[], если есть
+while (i < n1) {
+    arr[k] = leftArr[i];
+    i++;
+    k++;
+}
+
+// Копирование оставшихся элементов rightArr[], если есть
+while (j < n2) {
+    arr[k] = rightArr[j];
+    j++;
+    k++;
+}
+
+// Освобождение выделенной памяти
+free(leftArr);
+free(rightArr);
+
+}
+
+// Рекурсивная функция сортировки слиянием
+void mergeSort(int arr[], int left, int right) {
+if (left < right) {
+// Вычисление середины массива
+int mid = left + (right - left) / 2;
+
+    // Рекурсивная сортировка первой половины
+    mergeSort(arr, left, mid);
+
+    // Рекурсивная сортировка второй половины
+    mergeSort(arr, mid + 1, right);
+
+    // Слияние отсортированных половин
+    merge(arr, left, mid, right);
+}
+
+}
+
+// Вспомогательная функция для вывода массива
+void printArray(int arr[], int size) {
+for (int i = 0; i < size; i++) {
+printf("%d ", arr[i]);
+}
+printf("\n");
+}
+
+// Основная функция
+int main() {
+int arr[] = {12, 11, 13, 5, 6, 7};
+int size = sizeof(arr) / sizeof(arr[0]);
+
+printf("Исходный массив:\n");
+printArray(arr, size);
+
+mergeSort(arr, 0, size - 1);
+
+printf("Отсортированный массив:\n");
+printArray(arr, size);
+
+return 0;
+
+}
